@@ -16,5 +16,6 @@
 
     <modules>
         <module>alexa-iot-stack</module>
+        <module>alexa-iot-worker</module>
     </modules>
 </project>
