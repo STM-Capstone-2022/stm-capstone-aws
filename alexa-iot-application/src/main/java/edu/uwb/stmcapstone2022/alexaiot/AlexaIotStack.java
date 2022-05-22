@@ -1,6 +1,5 @@
 package edu.uwb.stmcapstone2022.alexaiot;
 
-import com.sun.tools.javac.util.List;
 import software.amazon.awscdk.Duration;
 import software.amazon.awscdk.Stack;
 import software.amazon.awscdk.StackProps;
@@ -11,6 +10,8 @@ import software.amazon.awscdk.services.lambda.Runtime;
 import software.constructs.Construct;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 public class AlexaIotStack extends Stack {
     public AlexaIotStack(final Construct scope, final String id) {
@@ -45,10 +46,12 @@ public class AlexaIotStack extends Stack {
                 .build();
 
         Function lambda = Function.Builder.create(this, "HelloLambda")
-                .code(Code.fromAsset("../alexa-iot-worker/target/alexa-iot-worker-0.0.0-ALPHA.jar"))
+                .code(Code.fromAsset("alexa-iot-worker/target/alexa-iot-worker-shaded.jar"))
                 .handler("edu.uwb.stmcapstone2022.alexaiot.Handler")
                 .role(lambdaRole)
                 .runtime(Runtime.JAVA_11).memorySize(1024)
+                .environment(Map.of(
+                        "THING_NAME", "ikLkaEbPgpQiP1pL"))
                 .timeout(Duration.minutes(5)).build();
     }
 }

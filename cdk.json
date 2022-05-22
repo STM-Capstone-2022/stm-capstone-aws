@@ -1,5 +1,5 @@
 {
-  "app": "mvn -e -q compile exec:java",
+  "app": "mvn -e -q -pl alexa-iot-application compile exec:java",
   "watch": {
     "include": [
       "**"
@@ -7,9 +7,9 @@
     "exclude": [
       "README.md",
       "cdk*.json",
-      "target",
-      "pom.xml",
-      "src/test"
+      "*/target",
+      "*/pom.xml",
+      "*/src/test"
     ]
   },
   "context": {

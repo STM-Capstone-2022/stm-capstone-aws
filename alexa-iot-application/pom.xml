@@ -9,35 +9,12 @@
         <version>0.0.0-ALPHA</version>
     </parent>
 
-    <artifactId>alexa-iot-stack</artifactId>
+    <artifactId>alexa-iot-application</artifactId>
     <version>0.0.0-ALPHA</version>
 
     <properties>
         <cdk.version>2.25.0</cdk.version>
     </properties>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>3.0.0</version>
-                <configuration>
-                    <mainClass>edu.uwb.stmcapstone2022.alexaiot.AlexaIotApp</mainClass>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
     <dependencies>
         <!-- AWS Cloud Development Kit -->
@@ -52,12 +29,28 @@
             <artifactId>constructs</artifactId>
             <version>${constructs.version}</version>
         </dependency>
-
-        <dependency>
-          <groupId>org.junit.jupiter</groupId>
-          <artifactId>junit-jupiter</artifactId>
-          <version>${junit.version}</version>
-          <scope>test</scope>
-        </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>9</source>
+                    <target>9</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.0.0</version>
+                <configuration>
+                    <mainClass>edu.uwb.stmcapstone2022.alexaiot.AlexaIotApp</mainClass>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
