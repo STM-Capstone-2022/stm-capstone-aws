@@ -7,7 +7,7 @@ public class AlexaIotApp {
     public static void main(final String[] args) {
         App app = new App();
 
-        new AlexaIotStack(app, "alexa-iot");
+        new AlexaIotStack(app, "alexa-iot-demo");
 
         app.synth();
     }

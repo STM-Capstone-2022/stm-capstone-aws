@@ -17,6 +17,6 @@ For a first time setup:
 
 Then to build and deploy, follow the following steps:
 
-- `mvn package -pl !alexa-iot-application` to build the application code
+- `mvn package -pl '!alexa-iot-application'` to build the application code
 - `cdk synth` to Generate the application template and upload assets to the CDK stack
 - `cdk deploy` to launch the stack to your account
