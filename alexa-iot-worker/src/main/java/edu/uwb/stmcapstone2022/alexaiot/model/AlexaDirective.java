@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
 
-@Builder
+@Builder(builderClassName = "Builder")
 @Getter
 public class AlexaDirective {
     @NonNull private final AlexaHeader header;

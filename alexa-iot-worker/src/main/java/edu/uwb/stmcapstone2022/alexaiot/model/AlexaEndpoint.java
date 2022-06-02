@@ -6,7 +6,7 @@ import lombok.NonNull;
 
 import java.util.Map;
 
-@Builder
+@Builder(builderClassName = "Builder")
 @Getter
 public class AlexaEndpoint {
     @NonNull private final String endpointId;

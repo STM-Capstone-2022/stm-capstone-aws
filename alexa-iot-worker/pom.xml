@@ -42,6 +42,10 @@
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>iotdataplane</artifactId>
         </dependency>
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>s3</artifactId>
+        </dependency>
 
         <!-- Utils -->
         <dependency>

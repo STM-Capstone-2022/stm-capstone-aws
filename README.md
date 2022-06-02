@@ -26,6 +26,12 @@ Developers need to install a few AWS tools and dev kits to set up the project:
 2. Run `cdk bootstrap aws://$ACCOUNT_NUMBER/$REGION` to set up CDK. `$ACCOUNT_NUMBER` should be the numeric root AWS
    account ID. `$REGION` should look something like `us-west-2`.
 
+## Configuration
+
+The application hardcodes one IoT Thing in the string name `THING_NAME`
+in [AlexaIotStack.java](./alexa-iot-application/src/main/java/edu/uwb/stmcapstone2022/alexaiot/AlexaIotStack.java).
+Change this before synthing and deploying the app.
+
 ## Building and Deploying the Project
 
 For a first time setup:

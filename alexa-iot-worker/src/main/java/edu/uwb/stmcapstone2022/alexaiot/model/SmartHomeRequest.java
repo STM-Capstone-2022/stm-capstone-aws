@@ -3,7 +3,7 @@ package edu.uwb.stmcapstone2022.alexaiot.model;
 import lombok.Builder;
 import lombok.Getter;
 
-@Builder
+@Builder(builderClassName = "Builder")
 @Getter
 public class SmartHomeRequest<T> {
     private final AlexaHeader header;

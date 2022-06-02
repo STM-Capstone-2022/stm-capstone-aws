@@ -5,7 +5,7 @@ import lombok.Getter;
 
 import java.time.ZonedDateTime;
 
-@Builder
+@Builder(builderClassName = "Builder")
 @Getter
 public class AlexaProperty<T> {
     private final String namespace;

@@ -6,7 +6,7 @@ import lombok.Singular;
 
 import java.util.List;
 
-@Builder
+@Builder(builderClassName = "Builder")
 @Getter
 public class AlexaContext {
     @Singular

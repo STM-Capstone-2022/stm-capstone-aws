@@ -4,17 +4,17 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
 
-@Builder
+@Builder(builderClassName = "Builder")
 @Getter
 public class AlexaAuthorizationRequest {
-    @Builder
+    @lombok.Builder(builderClassName = "Builder")
     @Getter
     public static class Grant {
         @NonNull private final String type;
         @NonNull private final String code;
     }
 
-    @Builder
+    @lombok.Builder(builderClassName = "Builder")
     @Getter
     public static class Grantee {
         @NonNull private final String type;

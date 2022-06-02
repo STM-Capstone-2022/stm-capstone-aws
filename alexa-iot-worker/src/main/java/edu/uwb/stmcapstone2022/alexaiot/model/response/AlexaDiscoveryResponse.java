@@ -8,10 +8,10 @@ import lombok.NonNull;
 import java.util.List;
 import java.util.Map;
 
-@Builder
+@Builder(builderClassName = "Builder")
 @Getter
 public class AlexaDiscoveryResponse {
-    @Builder
+    @lombok.Builder(builderClassName = "Builder")
     @Getter
     public static class Endpoint {
         @NonNull private final String endpointId;
@@ -83,7 +83,7 @@ public class AlexaDiscoveryResponse {
         WEARABLE
     }
 
-    @Builder
+    @lombok.Builder(builderClassName = "Builder")
     @Getter
     public static class AdditionalAttributes {
         private final String manufacturer;
@@ -94,7 +94,7 @@ public class AlexaDiscoveryResponse {
         private final String customIdentifier;
     }
 
-    @Builder
+    @lombok.Builder(builderClassName = "Builder")
     @Getter
     public static class Capability {
         @NonNull private final String type;
@@ -111,7 +111,7 @@ public class AlexaDiscoveryResponse {
         private final List<DirectiveConfigurations> directiveConfigurations;
     }
 
-    @Builder
+    @lombok.Builder(builderClassName = "Builder")
     @Getter
     public static class Properties {
         private final List<Object> supported;
@@ -119,27 +119,27 @@ public class AlexaDiscoveryResponse {
         private final Boolean retrievable;
     }
 
-    @Builder
+    @lombok.Builder(builderClassName = "Builder")
     @Getter
     public static class Semantics {
         // TODO
     }
 
-    @Builder
+    @lombok.Builder(builderClassName = "Builder")
     @Getter
     public static class VerificationsRequired {
         @NonNull private final String directive;
         @NonNull private final List<Object> methods;
     }
 
-    @Builder
+    @lombok.Builder(builderClassName = "Builder")
     @Getter
     public static class DirectiveConfigurations {
         @NonNull private List<String> directives;
         private final Object requestedAuthenticationConfidenceLevel; // TODO
     }
 
-    @Builder
+    @lombok.Builder(builderClassName = "Builder")
     @Getter
     public static class Connection {
         @NonNull private final String type;
@@ -152,7 +152,7 @@ public class AlexaDiscoveryResponse {
         private final String value;
     }
 
-    @Builder
+    @lombok.Builder(builderClassName = "Builder")
     @Getter
     public static class Relationships {
         // TODO fill out

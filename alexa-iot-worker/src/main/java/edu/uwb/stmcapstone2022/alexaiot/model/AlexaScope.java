@@ -4,7 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
 
-@Builder
+@Builder(builderClassName = "Builder")
 @Getter
 public class AlexaScope {
     @NonNull private final String type;
