@@ -1,5 +1,8 @@
-package edu.uwb.stmcapstone2022.alexaiot;
+package edu.uwb.stmcapstone2022.alexaiot.providers;
 
+import edu.uwb.stmcapstone2022.alexaiot.DirectiveHandler;
+import edu.uwb.stmcapstone2022.alexaiot.DirectiveHandlerProvider;
+import edu.uwb.stmcapstone2022.alexaiot.DirectiveName;
 import edu.uwb.stmcapstone2022.alexaiot.alexa.model.Directive;
 import edu.uwb.stmcapstone2022.alexaiot.alexa.model.Event;
 import edu.uwb.stmcapstone2022.alexaiot.alexa.model.SkillResponse;
@@ -13,8 +16,8 @@ import lombok.var;
 import java.util.List;
 import java.util.Map;
 
-public class AlexaDiscoveryHandler {
-    public SkillResponse<AlexaDiscoveryDiscoverResponse> handleDiscover(Directive<AlexaDiscoveryDiscover> request) {
+public final class AlexaDiscoveryProvider implements DirectiveHandlerProvider {
+    private SkillResponse<AlexaDiscoveryDiscoverResponse> discover(Directive<AlexaDiscoveryDiscover> request) {
         var payload = AlexaDiscoveryDiscoverResponse.builder()
                 .endpoint(AlexaDiscoveryDiscoverResponse.Endpoint.builder()
                         .endpointId("sample-bulb-01")
@@ -71,5 +74,11 @@ public class AlexaDiscoveryHandler {
                         .payload(payload)
                         .build())
                 .build();
+    }
+
+    @Override
+    public Map<DirectiveName, DirectiveHandler<?>> advertiseHandlers() {
+        return Map.of(new DirectiveName("Alexa.Discovery", "Discover"),
+                new DirectiveHandler<>(AlexaDiscoveryDiscover.class, this::discover));
     }
 }

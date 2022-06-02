@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 @Slf4j
-public class Handler implements RequestHandler<Object, Object> {
+public class OldExanpleHandler implements RequestHandler<Object, Object> {
     private final IotDataPlaneClient iotDataClient = IotDataPlaneClient.create();
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 

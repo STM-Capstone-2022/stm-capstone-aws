@@ -5,29 +5,48 @@ import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import edu.uwb.stmcapstone2022.alexaiot.alexa.errors.InvalidDirectiveException;
 import edu.uwb.stmcapstone2022.alexaiot.alexa.model.Directive;
+import edu.uwb.stmcapstone2022.alexaiot.alexa.model.Event;
 import edu.uwb.stmcapstone2022.alexaiot.alexa.model.SkillRequest;
 import edu.uwb.stmcapstone2022.alexaiot.alexa.model.SkillResponse;
-import edu.uwb.stmcapstone2022.alexaiot.alexa.model.directive.AlexaAuthorizationAcceptGrant;
-import edu.uwb.stmcapstone2022.alexaiot.alexa.model.directive.AlexaDiscoveryDiscover;
+import edu.uwb.stmcapstone2022.alexaiot.alexa.model.event.AlexaErrorResponse;
+import edu.uwb.stmcapstone2022.alexaiot.providers.AlexaAuthorizationProvider;
+import edu.uwb.stmcapstone2022.alexaiot.providers.AlexaDiscoveryProvider;
+import edu.uwb.stmcapstone2022.alexaiot.providers.AlexaPowerControllerProvider;
+import edu.uwb.stmcapstone2022.alexaiot.providers.AlexaProvider;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import lombok.var;
+import lombok.val;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
-public class EndpointHandler implements RequestStreamHandler {
+public final class EndpointHandler implements RequestStreamHandler {
+    private static final DirectiveHandler<Void>
+            INVALID_DIRECTIVE_HANDLER = new DirectiveHandler<>(Void.class, directive -> {
+                val name = new DirectiveName(directive.getHeader().getNamespace(), directive.getHeader().getName());
+        throw new InvalidDirectiveException(name, "Unsupported directive '" + name + "'");
+    });
     private final Gson gson = new GsonBuilder().create();
+    private final Map<DirectiveName, DirectiveHandler<?>> dispatchTable = new HashMap<>();
 
-    private final AlexaDiscoveryHandler discoveryHandler = new AlexaDiscoveryHandler();
-    private final AlexaAuthorizationHandler authorizationHandler = new AlexaAuthorizationHandler();
-    private final AlexaHandler alexaHandler = new AlexaHandler();
-    private final AlexaReportStateHandler reportStateHandler = new AlexaReportStateHandler();
+    public EndpointHandler() {
+        registerProvider(new AlexaDiscoveryProvider());
+        registerProvider(new AlexaAuthorizationProvider());
+        registerProvider(new AlexaPowerControllerProvider());
+        registerProvider(new AlexaProvider());
+    }
+
+    private void registerProvider(DirectiveHandlerProvider provider) {
+        dispatchTable.putAll(provider.advertiseHandlers());
+    }
 
     private static class RawSkillRequest extends SkillRequest<JsonObject> {
         public RawSkillRequest(@NonNull Directive<JsonObject> directive) {
@@ -39,44 +58,61 @@ public class EndpointHandler implements RequestStreamHandler {
     public void handleRequest(InputStream inputStream, OutputStream outputStream, Context context) throws IOException {
         Directive<JsonObject> directive = gson.fromJson(new InputStreamReader(inputStream), RawSkillRequest.class)
                 .getDirective();
+        SkillResponse<?> response;
 
-        log.info("Directive request: {}", gson.toJson(directive));
-
-        var namespace = directive.getHeader().getNamespace();
-        var name = directive.getHeader().getName();
-
-        SkillResponse<?> object;
-        if (namespace.equals("Alexa.Discovery") && name.equals("Discover")) {
-            object = discoveryHandler.handleDiscover(mapDirective(directive, AlexaDiscoveryDiscover.class));
-        } else if (namespace.equals("Alexa.Authorization") && name.equals("AcceptGrant")) {
-            object = authorizationHandler.handleAcceptGrant(
-                    mapDirective(directive, AlexaAuthorizationAcceptGrant.class));
-        } else if (namespace.equals("Alexa.PowerController")) {
-            var d = mapDirective(directive, Void.class);
-            if (name.equals("TurnOn")) {
-                object = alexaHandler.handleTurnOn(d);
-            } else if (name.equals("TurnOff")) {
-                object = alexaHandler.handleTurnOff(d);
-            } else {
-                throw new UnsupportedOperationException("Unsupported Directive '" + namespace + "::" + name + "'");
-            }
-        } else if (namespace.equals("Alexa") && name.equals("ReportState")) {
-            object = reportStateHandler.handleReportState(mapDirective(directive, Void.class));
-        } else {
-            throw new UnsupportedOperationException("Unsupported Directive '" + namespace + "::" + name + "'");
+        try {
+            log.info("Directive request: {}", gson.toJson(directive));
+            val name = new DirectiveName(directive.getHeader().getNamespace(), directive.getHeader().getName());
+            val handler = dispatchTable.getOrDefault(name, INVALID_DIRECTIVE_HANDLER);
+            response = invokeHandler(directive, handler);
+        } catch (InvalidDirectiveException e) {
+            response = SkillResponse.<AlexaErrorResponse>builder()
+                    .event(Event.<AlexaErrorResponse>builder()
+                            .header(directive.getHeader().toResponseBuilder()
+                                    .namespace("Alexa")
+                                    .name("ErrorResponse")
+                                    .build())
+                            .endpoint(directive.getEndpoint())
+                            .payload(AlexaErrorResponse.builder()
+                                    .type(AlexaErrorResponse.Type.INVALID_DIRECTIVE)
+                                    .message(e.getMessage())
+                                    .build())
+                            .build())
+                    .build();
+            log.error("Exception: {}", gson.toJson(response));
+            outputStream.write(gson.toJson(response).getBytes(StandardCharsets.UTF_8));
+            outputStream.flush();
+        } catch (RuntimeException e) {
+            response = SkillResponse.<AlexaErrorResponse>builder()
+                    .event(Event.<AlexaErrorResponse>builder()
+                            .header(directive.getHeader().toResponseBuilder()
+                                    .namespace("Alexa")
+                                    .name("ErrorResponse")
+                                    .build())
+                            .endpoint(directive.getEndpoint())
+                            .payload(AlexaErrorResponse.builder()
+                                    .type(AlexaErrorResponse.Type.INTERNAL_ERROR)
+                                    .message(e.getMessage())
+                                    .build())
+                            .build())
+                    .build();
+            log.error("Exception: {}", gson.toJson(response));
+            outputStream.write(gson.toJson(response).getBytes(StandardCharsets.UTF_8));
+            outputStream.flush();
         }
 
-        log.info("Skill response: {}", gson.toJson(object));
-
-        outputStream.write(gson.toJson(object).getBytes(StandardCharsets.UTF_8));
+        log.info("Skill response: {}", gson.toJson(response));
+        outputStream.write(gson.toJson(response).getBytes(StandardCharsets.UTF_8));
         outputStream.flush();
     }
 
-    private <T> Directive<T> mapDirective(Directive<JsonObject> directive, Class<? extends T> clazz) {
-        return Directive.<T>builder()
-                .header(directive.getHeader())
-                .endpoint(directive.getEndpoint())
-                .payload(gson.fromJson(directive.getPayload(), clazz))
+    private <T> SkillResponse<?> invokeHandler(Directive<JsonObject> rawDirective, DirectiveHandler<T> handler) {
+        Directive<T> directive = Directive.<T>builder()
+                .header(rawDirective.getHeader())
+                .endpoint(rawDirective.getEndpoint())
+                .payload(gson.fromJson(rawDirective.getPayload(), handler.getPayloadClass()))
                 .build();
+
+        return handler.getHandler().apply(directive);
     }
 }

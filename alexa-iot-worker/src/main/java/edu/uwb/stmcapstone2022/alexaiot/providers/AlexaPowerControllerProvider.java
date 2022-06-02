@@ -1,18 +1,21 @@
-package edu.uwb.stmcapstone2022.alexaiot;
+package edu.uwb.stmcapstone2022.alexaiot.providers;
 
+import edu.uwb.stmcapstone2022.alexaiot.DirectiveHandler;
+import edu.uwb.stmcapstone2022.alexaiot.DirectiveHandlerProvider;
+import edu.uwb.stmcapstone2022.alexaiot.DirectiveName;
 import edu.uwb.stmcapstone2022.alexaiot.alexa.model.*;
 import lombok.var;
 
 import java.time.ZonedDateTime;
 import java.util.Map;
 
-public class AlexaHandler {
+public final class AlexaPowerControllerProvider implements DirectiveHandlerProvider {
     private enum PowerState {
         ON,
         OFF
     }
 
-    public SkillResponse<Void> handleTurnOn(Directive<Void> request) {
+    private SkillResponse<Void> turnOn(Directive<Void> request) {
         return buildResponse(request, Property.<PowerState>builder()
                 .namespace("Alexa.PowerController")
                 .name("powerState")
@@ -22,7 +25,7 @@ public class AlexaHandler {
                 .build());
     }
 
-    public SkillResponse<Void> handleTurnOff(Directive<Void> request) {
+    private SkillResponse<Void> turnOff(Directive<Void> request) {
         return buildResponse(request, Property.<PowerState>builder()
                 .namespace("Alexa.PowerController")
                 .name("powerState")
@@ -62,5 +65,13 @@ public class AlexaHandler {
                                 .build())
                         .build())
                 .build();
+    }
+
+    @Override
+    public Map<DirectiveName, DirectiveHandler<?>> advertiseHandlers() {
+        return Map.of(new DirectiveName("Alexa.PowerController", "TurnOn"),
+                new DirectiveHandler<>(Void.class, this::turnOn),
+                new DirectiveName("Alexa.PowerController", "TurnOff"),
+                new DirectiveHandler<>(Void.class, this::turnOff));
     }
 }

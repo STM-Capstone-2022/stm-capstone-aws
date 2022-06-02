@@ -1,8 +1,11 @@
-package edu.uwb.stmcapstone2022.alexaiot;
+package edu.uwb.stmcapstone2022.alexaiot.providers;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
+import edu.uwb.stmcapstone2022.alexaiot.DirectiveHandler;
+import edu.uwb.stmcapstone2022.alexaiot.DirectiveHandlerProvider;
+import edu.uwb.stmcapstone2022.alexaiot.DirectiveName;
 import edu.uwb.stmcapstone2022.alexaiot.alexa.model.Directive;
 import edu.uwb.stmcapstone2022.alexaiot.alexa.model.SkillResponse;
 import lombok.Builder;
@@ -15,9 +18,10 @@ import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Map;
 
 @Slf4j
-public class AlexaReportStateHandler {
+public final class AlexaProvider implements DirectiveHandlerProvider {
     private final S3Client s3Client = S3Client.create();
     private static final String BUCKET_NAME = System.getenv("BUCKET_NAME");
     private static final Gson gson = new GsonBuilder().create();
@@ -34,7 +38,7 @@ public class AlexaReportStateHandler {
         private final float fake_door_knock;
     }
 
-    public SkillResponse<Void> handleReportState(Directive<Void> request) {
+    private SkillResponse<Void> reportState(Directive<Void> request) {
         GetObjectRequest objectRequest = GetObjectRequest.builder()
                 .bucket(BUCKET_NAME)
                 .key("envData.json")
@@ -48,5 +52,11 @@ public class AlexaReportStateHandler {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public Map<DirectiveName, DirectiveHandler<?>> advertiseHandlers() {
+        return Map.of(new DirectiveName("Alexa", "ReportState"),
+                new DirectiveHandler<>(Void.class, this::reportState));
     }
 }
