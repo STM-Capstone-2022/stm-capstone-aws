@@ -63,7 +63,7 @@ public class AlexaIotStack extends Stack {
 
         Function.Builder.create(this, "AlexaSkillEndpoint")
                 .code(Code.fromAsset("alexa-iot-worker/target/alexa-iot-worker-shaded.jar"))
-                .handler("edu.uwb.stmcapstone2022.alexaiot.AlexaHandler")
+                .handler("edu.uwb.stmcapstone2022.alexaiot.EndpointHandler")
                 .role(lambdaRole)
                 .runtime(Runtime.JAVA_11).memorySize(1024)
                 .environment(Map.of(

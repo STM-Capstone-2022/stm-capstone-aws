@@ -1,19 +1,19 @@
-package edu.uwb.stmcapstone2022.alexaiot.model;
+package edu.uwb.stmcapstone2022.alexaiot.alexa.model;
 
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
 
-@Builder(builderClassName = "Builder", toBuilder = true)
+@Builder(toBuilder = true)
 @Getter
-public class AlexaHeader {
+public class Header {
     @NonNull private final String namespace;
     @NonNull private final String name;
     @NonNull private final String messageId;
     private final String correlationToken;
     @NonNull private final String payloadVersion;
 
-    public AlexaHeader.Builder toResponseBuilder() {
+    public Header.Builder toResponseBuilder() {
         return toBuilder().messageId(messageId + "-R");
     }
 }
