@@ -45,7 +45,7 @@ public class AlexaDiscoveryDiscoverResponse {
         @NonNull private final String interfaceName;
         private final String instance;
         @NonNull private final String version;
-        @NonNull private final Properties properties;
+        private final Properties properties;
         private final Object capabilityResources;
         private final Object configuration;
         private final Object configurations;
