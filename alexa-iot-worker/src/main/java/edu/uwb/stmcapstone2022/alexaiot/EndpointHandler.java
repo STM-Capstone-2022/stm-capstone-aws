@@ -5,16 +5,16 @@ import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import com.google.gson.TypeAdapter;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 import edu.uwb.stmcapstone2022.alexaiot.alexa.errors.InvalidDirectiveException;
 import edu.uwb.stmcapstone2022.alexaiot.alexa.model.Directive;
 import edu.uwb.stmcapstone2022.alexaiot.alexa.model.Event;
 import edu.uwb.stmcapstone2022.alexaiot.alexa.model.SkillRequest;
 import edu.uwb.stmcapstone2022.alexaiot.alexa.model.SkillResponse;
 import edu.uwb.stmcapstone2022.alexaiot.alexa.model.event.AlexaErrorResponse;
-import edu.uwb.stmcapstone2022.alexaiot.providers.AlexaAuthorizationProvider;
-import edu.uwb.stmcapstone2022.alexaiot.providers.AlexaDiscoveryProvider;
-import edu.uwb.stmcapstone2022.alexaiot.providers.AlexaPowerControllerProvider;
-import edu.uwb.stmcapstone2022.alexaiot.providers.AlexaProvider;
+import edu.uwb.stmcapstone2022.alexaiot.providers.*;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -24,6 +24,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,7 +36,19 @@ public final class EndpointHandler implements RequestStreamHandler {
                 val name = new DirectiveName(directive.getHeader().getNamespace(), directive.getHeader().getName());
         throw new InvalidDirectiveException(name, "Unsupported directive '" + name + "'");
     });
-    private final Gson gson = new GsonBuilder().create();
+    private final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(ZonedDateTime.class, new TypeAdapter<ZonedDateTime>() {
+                @Override
+                public void write(JsonWriter out, ZonedDateTime value) throws IOException {
+                    out.value(value.format(DateTimeFormatter.ISO_INSTANT));
+                }
+
+                @Override
+                public ZonedDateTime read(JsonReader in) throws IOException {
+                    return ZonedDateTime.parse(in.nextString(), DateTimeFormatter.ISO_INSTANT);
+                }
+            })
+            .create();
     private final Map<DirectiveName, DirectiveHandler<?>> dispatchTable = new HashMap<>();
 
     public EndpointHandler() {

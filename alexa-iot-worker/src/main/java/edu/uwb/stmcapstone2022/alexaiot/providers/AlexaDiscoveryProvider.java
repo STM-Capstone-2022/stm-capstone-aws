@@ -11,6 +11,7 @@ import edu.uwb.stmcapstone2022.alexaiot.alexa.model.event.AlexaDiscoveryDiscover
 import edu.uwb.stmcapstone2022.alexaiot.alexa.model.event.AlexaDiscoveryDiscoverResponse.AdditionalAttributes;
 import edu.uwb.stmcapstone2022.alexaiot.alexa.model.event.AlexaDiscoveryDiscoverResponse.Capability;
 import edu.uwb.stmcapstone2022.alexaiot.alexa.model.event.AlexaDiscoveryDiscoverResponse.DisplayCategory;
+import edu.uwb.stmcapstone2022.alexaiot.alexa.model.event.AlexaDiscoveryDiscoverResponse.Properties;
 import lombok.var;
 
 import java.util.List;
@@ -47,20 +48,22 @@ public final class AlexaDiscoveryProvider implements DirectiveHandlerProvider {
                                 .type("AlexaInterface")
                                 .interfaceName("Alexa.PowerController")
                                 .version("3")
-                                .properties(AlexaDiscoveryDiscoverResponse.Properties.builder()
+                                .properties(Properties.builder()
                                         .supported(List.of(
                                                 Map.of("name", "powerState")))
                                         .retrievable(true)
+                                        .proactivelyReported(false)
                                         .build())
                                 .build())
                         .capability(Capability.builder()
                                 .type("AlexaInterface")
                                 .interfaceName("Alexa.EndpointHealth")
-                                .version("3.2")
-                                .properties(AlexaDiscoveryDiscoverResponse.Properties.builder()
+                                .version("3")
+                                .properties(Properties.builder()
                                         .supported(List.of(
                                                 Map.of("name", "connectivity")))
                                         .retrievable(true)
+                                        .proactivelyReported(false)
                                         .build())
                                 .build())
                         .build())
