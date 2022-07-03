@@ -79,9 +79,8 @@ public final class EndpointHandler implements RequestStreamHandler {
                                     .build())
                             .build())
                     .build();
-            log.error("Exception: {}", gson.toJson(response));
-            outputStream.write(gson.toJson(response).getBytes(StandardCharsets.UTF_8));
-            outputStream.flush();
+
+            log.error("Invalid Directive Exception", e);
         } catch (RuntimeException e) {
             response = SkillResponse.<AlexaErrorResponse>builder()
                     .event(Event.<AlexaErrorResponse>builder()
@@ -96,9 +95,8 @@ public final class EndpointHandler implements RequestStreamHandler {
                                     .build())
                             .build())
                     .build();
-            log.error("Exception: {}", gson.toJson(response));
-            outputStream.write(gson.toJson(response).getBytes(StandardCharsets.UTF_8));
-            outputStream.flush();
+
+            log.error("Internal Error Exception", e);
         }
 
         log.info("Skill response: {}", gson.toJson(response));

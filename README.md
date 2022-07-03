@@ -29,7 +29,7 @@ Developers need to install a few AWS tools and dev kits to set up the project:
 
 ## Configuration
 
-The application hardcodes one IoT Thing in the string name `THING_NAME`
+The application hardcodes one IoT Thing in the parameters `THING_NAME` and `THING_REGION`
 in [AlexaIotStack.java](./alexa-iot-application/src/main/java/edu/uwb/stmcapstone2022/alexaiot/AlexaIotStack.java).
 Change this before synthing and deploying the app.
 

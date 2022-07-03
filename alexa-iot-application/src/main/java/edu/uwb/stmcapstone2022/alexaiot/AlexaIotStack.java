@@ -1,6 +1,7 @@
 package edu.uwb.stmcapstone2022.alexaiot;
 
 import software.amazon.awscdk.Duration;
+import software.amazon.awscdk.Environment;
 import software.amazon.awscdk.Stack;
 import software.amazon.awscdk.StackProps;
 import software.amazon.awscdk.services.iam.*;
@@ -9,36 +10,33 @@ import software.amazon.awscdk.services.lambda.Function;
 import software.amazon.awscdk.services.lambda.Runtime;
 import software.constructs.Construct;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class AlexaIotStack extends Stack {
     private static final String THING_NAME = "ikLkaEbPgpQiP1pL";
-    private static final String AWS_ACCOUNTID = "015493416428";
-    private static final String BUCKET_NAME = "stm32u5-us-east-1";
+    private static final String THING_REGION = "us-west-2";
+
     public AlexaIotStack(final Construct scope, final String id) {
         this(scope, id, StackProps.builder()
                 .stackName(id)
-                .description("Alexa SKill endpoint for managing ST Device Kit")
+                .description("Alexa Skill endpoint for managing ST Device Kit")
+                .env(Environment.builder()
+                        .account(System.getenv("CDK_DEFAULT_ACCOUNT"))
+                        .region(System.getenv("CDK_DEFAULT_REGION"))
+                        .build())
                 .build());
     }
 
     public AlexaIotStack(final Construct scope, final String id, final StackProps props) {
         super(scope, id, props);
 
+        String accountId = Objects.requireNonNull(props.getEnv()).getAccount();
+
         List<PolicyStatement> smartHomeSkillStatements = new ArrayList<>();
         smartHomeSkillStatements.add(PolicyStatement.Builder.create()
                 .effect(Effect.ALLOW)
-                .resources(List.of("arn:aws:iot::" + AWS_ACCOUNTID + ":thing/" + THING_NAME))
+                .resources(List.of( "arn:aws:iot:" + THING_REGION + ":" + accountId + ":thing/" + THING_NAME))
                 .actions(List.of("*"))
-                .build());
-
-        smartHomeSkillStatements.add(PolicyStatement.Builder.create()
-                .effect(Effect.ALLOW)
-                .resources(List.of("arn:aws:s3:::" + BUCKET_NAME + "/*"))
-                .actions(List.of("s3:GetObject"))
                 .build());
 
         smartHomeSkillStatements.add(PolicyStatement.Builder.create()
@@ -54,21 +52,23 @@ public class AlexaIotStack extends Stack {
                 .statements(smartHomeSkillStatements)
                 .build();
 
-        Role lambdaRole = Role.Builder.create(this, "FunctionRole")
-                .roleName("FunctionRole")
-                .inlinePolicies(Collections.singletonMap("key", smartHomeSkillPolicy))
+        Role lambdaRole = Role.Builder.create(this, "EndpointRole")
+                .roleName("AlexaSkillEndpointFunctionRole")
+                .inlinePolicies(Collections.singletonMap("SmartHomeSkillPolicy", smartHomeSkillPolicy))
                 .path("/")
                 .assumedBy(new ServicePrincipal("lambda.amazonaws.com"))
                 .build();
 
-        Function.Builder.create(this, "AlexaSkillEndpoint")
+        Function.Builder.create(this, "AlexaSmartHomeSkillEndpoint")
+                .description("Connects to an Alexa Smart Home Skill to control the IoT device")
                 .code(Code.fromAsset("alexa-iot-worker/target/alexa-iot-worker-shaded.jar"))
                 .handler("edu.uwb.stmcapstone2022.alexaiot.EndpointHandler")
                 .role(lambdaRole)
                 .runtime(Runtime.JAVA_11).memorySize(1024)
                 .environment(Map.of(
                         "THING_NAME", THING_NAME,
-                        "BUCKET_NAME", BUCKET_NAME))
-                .timeout(Duration.minutes(5)).build();
+                        "THING_REGION", THING_REGION))
+                .timeout(Duration.minutes(5))
+                .build();
     }
 }
