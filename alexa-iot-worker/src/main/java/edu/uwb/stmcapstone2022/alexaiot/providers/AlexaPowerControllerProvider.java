@@ -23,8 +23,10 @@ public final class AlexaPowerControllerProvider implements DirectiveHandlerProvi
             .builder()
             .region(THING_REGION)
             .build();
-    private final SdkBytes TURNON_PAYLOAD = SdkBytes.fromUtf8String("{\"state\": {\"desired\": {\"LEDOn\": 1}}}");
-    private final SdkBytes TURNOFF_PAYLOAD = SdkBytes.fromUtf8String("{\"state\": {\"desired\": {\"LEDOn\": 0}}}");
+    private final SdkBytes TURNON_PAYLOAD = SdkBytes.fromUtf8String(
+            "{\"state\": {\"desired\": {\"LEDOn\": \"1\", \"powerOn\": \"1\"}}}");
+    private final SdkBytes TURNOFF_PAYLOAD = SdkBytes.fromUtf8String(
+            "{\"state\": {\"desired\": {\"LEDOn\": \"0\", \"powerOn\": \"0\"}}}");
 
     private enum PowerState {
         ON,

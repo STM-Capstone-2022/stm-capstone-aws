@@ -23,7 +23,7 @@ Developers need to install a few AWS tools and dev kits to set up the project:
     - Or on Debian: `sudo apt-get install maven`
 
 1. Make sure you have access to an IAM account, and then run `aws configure`. Ensure the region is set to `us-east-1`.
-2. Run `cdk bootstrap aws://$ACCOUNT_NUMBER/ue-east-1` to set up CDK. `$ACCOUNT_NUMBER` should be the numeric root AWS
+2. Run `cdk bootstrap aws://$ACCOUNT_NUMBER/us-east-1` to set up CDK. `$ACCOUNT_NUMBER` should be the numeric root AWS
    account ID. The region **must** be `us-east-1`, as that's the region the Alexa service will talk to within the US
    market.
 
