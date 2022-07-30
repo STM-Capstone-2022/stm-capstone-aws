@@ -8,7 +8,6 @@ import edu.uwb.stmcapstone2022.alexaiot.alexa.model.Event;
 import edu.uwb.stmcapstone2022.alexaiot.alexa.model.SkillResponse;
 import edu.uwb.stmcapstone2022.alexaiot.alexa.model.directive.AlexaDiscoveryDiscover;
 import edu.uwb.stmcapstone2022.alexaiot.alexa.model.event.AlexaDiscoveryDiscoverResponse;
-import edu.uwb.stmcapstone2022.alexaiot.alexa.model.event.AlexaDiscoveryDiscoverResponse.AdditionalAttributes;
 import edu.uwb.stmcapstone2022.alexaiot.alexa.model.event.AlexaDiscoveryDiscoverResponse.Capability;
 import edu.uwb.stmcapstone2022.alexaiot.alexa.model.event.AlexaDiscoveryDiscoverResponse.DisplayCategory;
 import edu.uwb.stmcapstone2022.alexaiot.alexa.model.event.AlexaDiscoveryDiscoverResponse.Properties;
@@ -21,28 +20,26 @@ public final class AlexaDiscoveryProvider implements DirectiveHandlerProvider {
     private SkillResponse<AlexaDiscoveryDiscoverResponse> discover(Directive<AlexaDiscoveryDiscover> request) {
         var payload = AlexaDiscoveryDiscoverResponse.builder()
                 .endpoint(AlexaDiscoveryDiscoverResponse.Endpoint.builder()
-                        .endpointId("sample-bulb-01")
+                        .endpointId("demo-device-01")
                         .manufacturerName("Smart Device Company")
-                        .friendlyName("Livingroom Lamp")
-                        .description("Virtual smart light bulb")
-                        .displayCategories(List.of(DisplayCategory.LIGHT))
-                        .additionalAttributes(AdditionalAttributes.builder()
-                                .manufacturer("Sample Manufacturer")
-                                .model("Sample Model")
-                                .serialNumber("U11112233456")
-                                .firmwareVersion("1.24.2546")
-                                .softwareVersion("1.036")
-                                .customIdentifier("Sample custom ID")
-                                .build())
-                        .cookies(Map.of(
-                                "key1", "Arbitrary key/value pairs for skill to reference this endpoint",
-                                "key2", "There can be multiple entries",
-                                "key3", "but they should only be used for reference purposes",
-                                "key4", "this is not a suitable place for endpoint state."))
+                        .friendlyName("Generic Device")
+                        .description("Power-controlled device")
+                        .displayCategories(List.of(DisplayCategory.SWITCH))
                         .capability(Capability.builder()
                                 .type("AlexaInterface")
                                 .interfaceName("Alexa")
                                 .version("3")
+                                .build())
+                        .capability(Capability.builder()
+                                .type("AlexaInterface")
+                                .interfaceName("Alexa.EndpointHealth")
+                                .version("3")
+                                .properties(Properties.builder()
+                                        .supported(List.of(
+                                                Map.of("name", "connectivity")))
+                                        .retrievable(true)
+                                        .proactivelyReported(false)
+                                        .build())
                                 .build())
                         .capability(Capability.builder()
                                 .type("AlexaInterface")
@@ -55,6 +52,18 @@ public final class AlexaDiscoveryProvider implements DirectiveHandlerProvider {
                                         .proactivelyReported(false)
                                         .build())
                                 .build())
+                        .build())
+                .endpoint(AlexaDiscoveryDiscoverResponse.Endpoint.builder()
+                        .endpointId("door-sensor-01")
+                        .manufacturerName("Smart Device Company")
+                        .friendlyName("Door Knock Sensor")
+                        .description("Smart contact sensor")
+                        .displayCategories(List.of(DisplayCategory.DOOR, DisplayCategory.DOORBELL))
+                        .capability(Capability.builder()
+                                .type("AlexaInterface")
+                                .interfaceName("Alexa")
+                                .version("3")
+                                .build())
                         .capability(Capability.builder()
                                 .type("AlexaInterface")
                                 .interfaceName("Alexa.EndpointHealth")
@@ -62,6 +71,17 @@ public final class AlexaDiscoveryProvider implements DirectiveHandlerProvider {
                                 .properties(Properties.builder()
                                         .supported(List.of(
                                                 Map.of("name", "connectivity")))
+                                        .retrievable(true)
+                                        .proactivelyReported(false)
+                                        .build())
+                                .build())
+                        .capability(Capability.builder()
+                                .type("AlexaInterface")
+                                .interfaceName("Alexa.MotionSensor")
+                                .version("3")
+                                .properties(Properties.builder()
+                                        .supported(List.of(
+                                                Map.of("name", "detectionState")))
                                         .retrievable(true)
                                         .proactivelyReported(false)
                                         .build())

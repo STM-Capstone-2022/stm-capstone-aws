@@ -3,6 +3,7 @@ package edu.uwb.stmcapstone2022.alexaiot.providers;
 import edu.uwb.stmcapstone2022.alexaiot.DirectiveHandler;
 import edu.uwb.stmcapstone2022.alexaiot.DirectiveHandlerProvider;
 import edu.uwb.stmcapstone2022.alexaiot.DirectiveName;
+import edu.uwb.stmcapstone2022.alexaiot.alexa.errors.InvalidDirectiveException;
 import edu.uwb.stmcapstone2022.alexaiot.alexa.model.*;
 import lombok.extern.slf4j.Slf4j;
 import lombok.var;
@@ -34,6 +35,12 @@ public final class AlexaPowerControllerProvider implements DirectiveHandlerProvi
     }
 
     private SkillResponse<Void> turnOn(Directive<Void> request) {
+        String endpointId = request.getEndpoint().getEndpointId();
+        if (!endpointId.equals("demo-device-01")) {
+            throw new InvalidDirectiveException(DirectiveName.fromDirective(request),
+                    "Device '" + endpointId + "' doesn't support directive");
+        }
+
         UpdateThingShadowRequest thingRequest = UpdateThingShadowRequest.builder()
                 .thingName(THING_NAME)
                 .payload(TURNON_PAYLOAD)
@@ -53,6 +60,12 @@ public final class AlexaPowerControllerProvider implements DirectiveHandlerProvi
     }
 
     private SkillResponse<Void> turnOff(Directive<Void> request) {
+        String endpointId = request.getEndpoint().getEndpointId();
+        if (!endpointId.equals("demo-device-01")) {
+            throw new InvalidDirectiveException(DirectiveName.fromDirective(request),
+                    "Device '" + endpointId + "' doesn't support directive");
+        }
+
         UpdateThingShadowRequest thingRequest = UpdateThingShadowRequest.builder()
                 .thingName(THING_NAME)
                 .payload(TURNOFF_PAYLOAD)

@@ -76,7 +76,7 @@ public final class EndpointHandler implements RequestStreamHandler {
 
         try {
             log.info("Directive request: {}", gson.toJson(directive));
-            val name = new DirectiveName(directive.getHeader().getNamespace(), directive.getHeader().getName());
+            val name = DirectiveName.fromDirective(directive);
             val handler = dispatchTable.getOrDefault(name, INVALID_DIRECTIVE_HANDLER);
             response = invokeHandler(directive, handler);
         } catch (InvalidDirectiveException e) {

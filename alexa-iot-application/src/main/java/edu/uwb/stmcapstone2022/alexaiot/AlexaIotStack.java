@@ -13,6 +13,7 @@ import software.constructs.Construct;
 import java.util.*;
 
 public class AlexaIotStack extends Stack {
+    private static final String SENSOR_NAME = "abcxyz";
     private static final String THING_NAME = "ikLkaEbPgpQiP1pL";
     private static final String THING_REGION = "us-west-2";
 
@@ -35,7 +36,9 @@ public class AlexaIotStack extends Stack {
         List<PolicyStatement> smartHomeSkillStatements = new ArrayList<>();
         smartHomeSkillStatements.add(PolicyStatement.Builder.create()
                 .effect(Effect.ALLOW)
-                .resources(List.of( "arn:aws:iot:" + THING_REGION + ":" + accountId + ":thing/" + THING_NAME))
+                .resources(List.of(
+                        "arn:aws:iot:" + THING_REGION + ":" + accountId + ":thing/" + SENSOR_NAME,
+                        "arn:aws:iot:" + THING_REGION + ":" + accountId + ":thing/" + THING_NAME))
                 .actions(List.of("*"))
                 .build());
 
@@ -66,6 +69,7 @@ public class AlexaIotStack extends Stack {
                 .role(lambdaRole)
                 .runtime(Runtime.JAVA_11).memorySize(1024)
                 .environment(Map.of(
+                        "SENSOR_NAME", SENSOR_NAME,
                         "THING_NAME", THING_NAME,
                         "THING_REGION", THING_REGION))
                 .timeout(Duration.minutes(5))

@@ -29,9 +29,12 @@ Developers need to install a few AWS tools and dev kits to set up the project:
 
 ## Configuration
 
-The application hardcodes one IoT Thing in the parameters `THING_NAME` and `THING_REGION`
-in [AlexaIotStack.java](./alexa-iot-application/src/main/java/edu/uwb/stmcapstone2022/alexaiot/AlexaIotStack.java).
-Change this before synthing and deploying the app.
+The application configures four constants hardcoded
+in [AlexaIotStack.java](./alexa-iot-application/src/main/java/edu/uwb/stmcapstone2022/alexaiot/AlexaIotStack.java):
+
+- `SENSOR_NAME` - The ID of the IoT Thing Shadow of the door knock sensor
+- `THING_NAME` - The ID of the IoT Thing Shadow of the generic power-controllable device
+- `THING_REGION` - The AWS-deployed region of all IoT Thing Shadows
 
 ## Building and Deploying the Project
 

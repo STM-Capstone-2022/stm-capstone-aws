@@ -2,7 +2,6 @@ package edu.uwb.stmcapstone2022.alexaiot.alexa.model.event;
 
 import com.google.gson.annotations.SerializedName;
 import lombok.*;
-import lombok.experimental.Accessors;
 
 import java.util.List;
 import java.util.Map;
