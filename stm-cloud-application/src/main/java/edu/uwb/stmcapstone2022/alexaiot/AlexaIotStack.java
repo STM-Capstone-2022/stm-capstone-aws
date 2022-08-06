@@ -64,7 +64,7 @@ public class AlexaIotStack extends Stack {
 
         Function.Builder.create(this, "AlexaSmartHomeSkillEndpoint")
                 .description("Connects to an Alexa Smart Home Skill to control the IoT device")
-                .code(Code.fromAsset("alexa-iot-worker/target/alexa-iot-worker-shaded.jar"))
+                .code(Code.fromAsset("alexa-endpoint-worker/target/alexa-endpoint-worker-shaded.jar"))
                 .handler("edu.uwb.stmcapstone2022.alexaiot.EndpointHandler")
                 .role(lambdaRole)
                 .runtime(Runtime.JAVA_11).memorySize(1024)

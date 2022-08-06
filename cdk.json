@@ -1,5 +1,5 @@
 {
-  "app": "mvn -e -q -pl alexa-iot-application compile exec:java",
+  "app": "mvn -e -q -pl stm-cloud-application compile exec:java",
   "watch": {
     "include": [
       "**"

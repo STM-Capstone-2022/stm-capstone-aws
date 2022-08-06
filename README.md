@@ -1,26 +1,28 @@
-# Alexa IoT Demo
+# STM Capstone AWS integration
 
-This repository demonstrates an AWS lambda interfacing with an STM32 Discovery Kit.
+This repository integrates with 
 
 The repo has a couple submodules:
 
-- **alexa-iot-application** - The Amazon CDK code that defines a CloudFormation stack for the Alexa skill.
-- **alexa-iot-worker** - The source code for the AWS Lambda function that drives the Alexa Skill.
+- **stm-cloud-application** - The Amazon CDK code that defines a CloudFormation stack for the Alexa skill.
+- **alexa-endpoint-worker** - The source code for the AWS Lambda function that drives the Alexa Skill.
 
 ## Developer Tools and Tool Setup
 
-Developers need to install a few AWS tools and dev kits to set up the project:
+Developers need to install a few AWS tools and dev kits to set up the project. For Windows developers, please use the
+Windows Subsystem for Linux to install the required software. Both our Mac and Linux developers have had an easier time
+to install the tooling, and the README's shell commands assume POSIX syntax.
 
 - AWS command line interface: <https://aws.amazon.com/cli/>
-- Node package manager to install CDK: <https://www.npmjs.com/>
-    - Or on Mac: `brew install npm`
-    - Or on Debian: `sudo apt-get install npm`
+- Node.js's NPM to install the AWS CDK: <https://www.npmjs.com/>
+    - Or on Mac, run: `brew install npm`
+    - Or on Debian Linux, run: `sudo apt-get install npm`
 - Install AWS CDK: `npm install -g aws-cdk`
-    - If there's permission errors on Mac or Linux, run `sudo !!` directly afterwards. It means `npm` was installed as
-      system files and needs root access
+    - If there's permission errors, run `sudo !!` directly afterwards. It means `npm` was installed on the whole system
+      rather than local to the user, and needs root access
 - Maven, to build the Java project: <https://maven.apache.org/>
-    - Or on Mac: `brew install maven`
-    - Or on Debian: `sudo apt-get install maven`
+    - Or on Mac, run: `brew install maven`
+    - Or on Debian Linux, run: `sudo apt-get install maven`
 
 1. Make sure you have access to an IAM account, and then run `aws configure`. Ensure the region is set to `us-east-1`.
 2. Run `cdk bootstrap aws://$ACCOUNT_NUMBER/us-east-1` to set up CDK. `$ACCOUNT_NUMBER` should be the numeric root AWS
@@ -34,13 +36,14 @@ in [AlexaIotStack.java](./alexa-iot-application/src/main/java/edu/uwb/stmcapston
 
 - `SENSOR_NAME` - The ID of the IoT Thing Shadow of the door knock sensor
 - `THING_NAME` - The ID of the IoT Thing Shadow of the generic power-controllable device
-- `THING_REGION` - The AWS-deployed region of all IoT Thing Shadows
+- `THING_REGION` - The AWS-deployed region of both IoT Thing Shadows
 
 ## Building and Deploying the Project
 
 To build and deploy, run the following commands within the project directory:
 
-- `mvn package -pl '!alexa-iot-application'` to build the application code
+- `mvn package -pl '!alexa-iot-application'` to build all worker submodules (building the cloud application itself is
+  not necessary).
 - `cdk synth` to Generate the application template and upload assets to the CDK stack
 - `cdk deploy` to launch the stack to your account
 
@@ -62,5 +65,5 @@ deleted and created (redeploying through CDK shouldn't require this, unless the 
    Smart Home -> Smart Home service endpoint -> Default endpoint. Repeat steps 5 and 6 whenever the Function is deleted
    in-between redeployment.
 
-TODO Set Up Account
-Linking: <https://developer.amazon.com/en-US/docs/alexa/smarthome/set-up-account-linking-tutorial.html>
+Finally, set up Account Linking in the AWS
+documentation: <https://developer.amazon.com/en-US/docs/alexa/smarthome/set-up-account-linking-tutorial.html>

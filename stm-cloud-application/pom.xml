@@ -4,12 +4,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>alexa-iot-demo</artifactId>
+        <artifactId>stm-capstone-aws</artifactId>
         <groupId>edu.uwb.stmcapstone2022.alexaiot</groupId>
         <version>0.0.0-ALPHA</version>
     </parent>
 
-    <artifactId>alexa-iot-application</artifactId>
+    <artifactId>stm-cloud-application</artifactId>
     <version>0.0.0-ALPHA</version>
 
     <properties>
