@@ -13,8 +13,12 @@ import edu.uwb.stmcapstone2022.alexaiot.alexa.model.event.AlexaDiscoveryDiscover
 import edu.uwb.stmcapstone2022.alexaiot.alexa.model.event.AlexaDiscoveryDiscoverResponse.Properties;
 import lombok.var;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import static java.util.Collections.singletonList;
+import static java.util.Collections.singletonMap;
 
 public final class AlexaDiscoveryProvider implements DirectiveHandlerProvider {
     private SkillResponse<AlexaDiscoveryDiscoverResponse> discover(Directive<AlexaDiscoveryDiscover> request) {
@@ -22,21 +26,21 @@ public final class AlexaDiscoveryProvider implements DirectiveHandlerProvider {
                 .endpoint(AlexaDiscoveryDiscoverResponse.Endpoint.builder()
                         .endpointId("demo-device-01")
                         .manufacturerName("Smart Device Company")
-                        .friendlyName("Generic Device")
                         .description("Power-controlled device")
+                        .friendlyName("Generic Device")
                         .displayCategories(List.of(DisplayCategory.SWITCH))
                         .capability(Capability.builder()
                                 .type("AlexaInterface")
                                 .interfaceName("Alexa")
                                 .version("3")
                                 .build())
+                        .cookies(Collections.emptyMap())
                         .capability(Capability.builder()
                                 .type("AlexaInterface")
                                 .interfaceName("Alexa.EndpointHealth")
                                 .version("3")
                                 .properties(Properties.builder()
-                                        .supported(List.of(
-                                                Map.of("name", "connectivity")))
+                                        .supported(singletonList(singletonMap("name", "connectivity")))
                                         .retrievable(true)
                                         .proactivelyReported(false)
                                         .build())
@@ -46,8 +50,7 @@ public final class AlexaDiscoveryProvider implements DirectiveHandlerProvider {
                                 .interfaceName("Alexa.PowerController")
                                 .version("3")
                                 .properties(Properties.builder()
-                                        .supported(List.of(
-                                                Map.of("name", "powerState")))
+                                        .supported(singletonList(singletonMap("name", "powerState")))
                                         .retrievable(true)
                                         .proactivelyReported(false)
                                         .build())
@@ -56,8 +59,8 @@ public final class AlexaDiscoveryProvider implements DirectiveHandlerProvider {
                 .endpoint(AlexaDiscoveryDiscoverResponse.Endpoint.builder()
                         .endpointId("door-sensor-01")
                         .manufacturerName("Smart Device Company")
-                        .friendlyName("Door Knock Sensor")
                         .description("Smart contact sensor")
+                        .friendlyName("Door Knock Sensor")
                         .displayCategories(List.of(DisplayCategory.DOOR, DisplayCategory.DOORBELL))
                         .capability(Capability.builder()
                                 .type("AlexaInterface")
@@ -69,8 +72,7 @@ public final class AlexaDiscoveryProvider implements DirectiveHandlerProvider {
                                 .interfaceName("Alexa.EndpointHealth")
                                 .version("3")
                                 .properties(Properties.builder()
-                                        .supported(List.of(
-                                                Map.of("name", "connectivity")))
+                                        .supported(singletonList(singletonMap("name", "connectivity")))
                                         .retrievable(true)
                                         .proactivelyReported(false)
                                         .build())
@@ -80,8 +82,7 @@ public final class AlexaDiscoveryProvider implements DirectiveHandlerProvider {
                                 .interfaceName("Alexa.MotionSensor")
                                 .version("3")
                                 .properties(Properties.builder()
-                                        .supported(List.of(
-                                                Map.of("name", "detectionState")))
+                                        .supported(singletonList(singletonMap("name", "detectionState")))
                                         .retrievable(true)
                                         .proactivelyReported(false)
                                         .build())

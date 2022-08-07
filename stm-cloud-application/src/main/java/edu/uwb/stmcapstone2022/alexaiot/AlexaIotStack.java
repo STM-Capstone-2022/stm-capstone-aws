@@ -1,7 +1,6 @@
 package edu.uwb.stmcapstone2022.alexaiot;
 
 import software.amazon.awscdk.Duration;
-import software.amazon.awscdk.Environment;
 import software.amazon.awscdk.Stack;
 import software.amazon.awscdk.StackProps;
 import software.amazon.awscdk.services.iam.*;
@@ -13,23 +12,13 @@ import software.constructs.Construct;
 import java.util.*;
 
 public class AlexaIotStack extends Stack {
-    private static final String SENSOR_NAME = "abcxyz";
-    private static final String THING_NAME = "ikLkaEbPgpQiP1pL";
-    private static final String THING_REGION = "us-west-2";
-
-    public AlexaIotStack(final Construct scope, final String id) {
-        this(scope, id, StackProps.builder()
-                .stackName(id)
-                .description("Alexa Skill endpoint for managing ST Device Kit")
-                .env(Environment.builder()
-                        .account(System.getenv("CDK_DEFAULT_ACCOUNT"))
-                        .region(System.getenv("CDK_DEFAULT_REGION"))
-                        .build())
-                .build());
-    }
-
-    public AlexaIotStack(final Construct scope, final String id, final StackProps props) {
+    public AlexaIotStack(final Construct scope, final String id, final StackProps props,
+                         final Properties properties) {
         super(scope, id, props);
+
+        String thingRegion = properties.getProperty("iot.thing.region");
+        String thingName = properties.getProperty("iot.thing.generic.name");
+        String sensorName = properties.getProperty("iot.thing.sensor.name");
 
         String accountId = Objects.requireNonNull(props.getEnv()).getAccount();
 
@@ -37,8 +26,8 @@ public class AlexaIotStack extends Stack {
         smartHomeSkillStatements.add(PolicyStatement.Builder.create()
                 .effect(Effect.ALLOW)
                 .resources(List.of(
-                        "arn:aws:iot:" + THING_REGION + ":" + accountId + ":thing/" + SENSOR_NAME,
-                        "arn:aws:iot:" + THING_REGION + ":" + accountId + ":thing/" + THING_NAME))
+                        "arn:aws:iot:" + thingRegion + ":" + accountId + ":thing/" + sensorName,
+                        "arn:aws:iot:" + thingRegion + ":" + accountId + ":thing/" + thingName))
                 .actions(List.of("*"))
                 .build());
 
@@ -69,9 +58,9 @@ public class AlexaIotStack extends Stack {
                 .role(lambdaRole)
                 .runtime(Runtime.JAVA_11).memorySize(1024)
                 .environment(Map.of(
-                        "SENSOR_NAME", SENSOR_NAME,
-                        "THING_NAME", THING_NAME,
-                        "THING_REGION", THING_REGION))
+                        "SENSOR_NAME", sensorName,
+                        "THING_NAME", thingName,
+                        "THING_REGION", thingRegion))
                 .timeout(Duration.minutes(5))
                 .build();
     }

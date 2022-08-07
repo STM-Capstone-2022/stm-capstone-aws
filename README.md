@@ -31,12 +31,15 @@ to install the tooling, and the README's shell commands assume POSIX syntax.
 
 ## Configuration
 
-The application configures four constants hardcoded
-in [AlexaIotStack.java](./alexa-iot-application/src/main/java/edu/uwb/stmcapstone2022/alexaiot/AlexaIotStack.java):
+Constants are softcoded in [application.properties](./stm-cloud-application/src/main/resources/application.properties).
+A sibling file `application-override.properties` is gitignore'd to hold sensitive information and may
+supersede `application.properties` when both contain the same key.
 
-- `SENSOR_NAME` - The ID of the IoT Thing Shadow of the door knock sensor
-- `THING_NAME` - The ID of the IoT Thing Shadow of the generic power-controllable device
-- `THING_REGION` - The AWS-deployed region of both IoT Thing Shadows
+These keys include:
+
+- `iot.thing.generic.name` - The ID of the IoT Core Thing of the automated generic power-controllable device.
+- `iot.thing.sensor.name` - The ID of the IoT Core Thing of the door knock sensor.
+- `iot.thing.region` - The AWS-deployed region of both IoT Core Things.
 
 ## Building and Deploying the Project
 
