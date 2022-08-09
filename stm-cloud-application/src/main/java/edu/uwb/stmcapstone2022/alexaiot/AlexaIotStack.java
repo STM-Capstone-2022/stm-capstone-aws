@@ -17,17 +17,14 @@ public class AlexaIotStack extends Stack {
         super(scope, id, props);
 
         String thingRegion = properties.getProperty("iot.thing.region");
-        String thingName = properties.getProperty("iot.thing.generic.name");
-        String sensorName = properties.getProperty("iot.thing.sensor.name");
+        String relayName = properties.getProperty("iot.thing.relay.name");
 
         String accountId = Objects.requireNonNull(props.getEnv()).getAccount();
 
         List<PolicyStatement> smartHomeSkillStatements = new ArrayList<>();
         smartHomeSkillStatements.add(PolicyStatement.Builder.create()
                 .effect(Effect.ALLOW)
-                .resources(List.of(
-                        "arn:aws:iot:" + thingRegion + ":" + accountId + ":thing/" + sensorName,
-                        "arn:aws:iot:" + thingRegion + ":" + accountId + ":thing/" + thingName))
+                .resources(List.of("arn:aws:iot:" + thingRegion + ":" + accountId + ":thing/" + relayName))
                 .actions(List.of("*"))
                 .build());
 
@@ -58,8 +55,7 @@ public class AlexaIotStack extends Stack {
                 .role(lambdaRole)
                 .runtime(Runtime.JAVA_11).memorySize(1024)
                 .environment(Map.of(
-                        "SENSOR_NAME", sensorName,
-                        "THING_NAME", thingName,
+                        "RELAY_NAME", relayName,
                         "THING_REGION", thingRegion))
                 .timeout(Duration.minutes(5))
                 .build();

@@ -14,6 +14,7 @@ import edu.uwb.stmcapstone2022.alexaiot.alexa.model.Event;
 import edu.uwb.stmcapstone2022.alexaiot.alexa.model.SkillRequest;
 import edu.uwb.stmcapstone2022.alexaiot.alexa.model.SkillResponse;
 import edu.uwb.stmcapstone2022.alexaiot.alexa.model.event.AlexaErrorResponse;
+import edu.uwb.stmcapstone2022.alexaiot.endoints.NoSuchEndpointException;
 import edu.uwb.stmcapstone2022.alexaiot.providers.*;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -51,6 +52,7 @@ public final class EndpointHandler implements RequestStreamHandler {
             .create();
     private final Map<DirectiveName, DirectiveHandler<?>> dispatchTable = new HashMap<>();
 
+    @SuppressWarnings("unused")
     public EndpointHandler() {
         registerProvider(new AlexaDiscoveryProvider());
         registerProvider(new AlexaAuthorizationProvider());
@@ -79,6 +81,22 @@ public final class EndpointHandler implements RequestStreamHandler {
             val name = DirectiveName.fromDirective(directive);
             val handler = dispatchTable.getOrDefault(name, INVALID_DIRECTIVE_HANDLER);
             response = invokeHandler(directive, handler);
+        } catch (NoSuchEndpointException e) {
+            response = SkillResponse.<AlexaErrorResponse>builder()
+                    .event(Event.<AlexaErrorResponse>builder()
+                            .header(directive.getHeader().toResponseBuilder()
+                                    .namespace("Alexa")
+                                    .name("ErrorResponse")
+                                    .build())
+                            .endpoint(directive.getEndpoint())
+                            .payload(AlexaErrorResponse.builder()
+                                    .type(AlexaErrorResponse.Type.NO_SUCH_ENDPOINT)
+                                    .message(e.getMessage())
+                                    .build())
+                            .build())
+                    .build();
+
+            log.error("No Such Device Exception", e);
         } catch (InvalidDirectiveException e) {
             response = SkillResponse.<AlexaErrorResponse>builder()
                     .event(Event.<AlexaErrorResponse>builder()

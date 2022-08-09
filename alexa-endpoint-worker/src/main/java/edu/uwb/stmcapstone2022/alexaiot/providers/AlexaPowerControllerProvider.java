@@ -3,32 +3,17 @@ package edu.uwb.stmcapstone2022.alexaiot.providers;
 import edu.uwb.stmcapstone2022.alexaiot.DirectiveHandler;
 import edu.uwb.stmcapstone2022.alexaiot.DirectiveHandlerProvider;
 import edu.uwb.stmcapstone2022.alexaiot.DirectiveName;
-import edu.uwb.stmcapstone2022.alexaiot.alexa.errors.InvalidDirectiveException;
 import edu.uwb.stmcapstone2022.alexaiot.alexa.model.*;
+import edu.uwb.stmcapstone2022.alexaiot.endoints.ThingClient;
+import edu.uwb.stmcapstone2022.alexaiot.endoints.ThingFactory;
 import lombok.extern.slf4j.Slf4j;
 import lombok.var;
-import software.amazon.awssdk.core.SdkBytes;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.iotdataplane.IotDataPlaneClient;
-import software.amazon.awssdk.services.iotdataplane.model.UpdateThingShadowRequest;
-import software.amazon.awssdk.services.iotdataplane.model.UpdateThingShadowResponse;
 
 import java.time.ZonedDateTime;
 import java.util.Map;
 
 @Slf4j
 public final class AlexaPowerControllerProvider implements DirectiveHandlerProvider {
-    private final String THING_NAME = System.getenv("THING_NAME");
-    private final Region THING_REGION = Region.of(System.getenv("THING_REGION"));
-    private final IotDataPlaneClient iotDataClient = IotDataPlaneClient
-            .builder()
-            .region(THING_REGION)
-            .build();
-    private final SdkBytes TURNON_PAYLOAD = SdkBytes.fromUtf8String(
-            "{\"state\": {\"desired\": {\"LEDOn\": \"1\", \"powerOn\": \"1\"}}}");
-    private final SdkBytes TURNOFF_PAYLOAD = SdkBytes.fromUtf8String(
-            "{\"state\": {\"desired\": {\"LEDOn\": \"0\", \"powerOn\": \"0\"}}}");
-
     private enum PowerState {
         ON,
         OFF
@@ -36,20 +21,9 @@ public final class AlexaPowerControllerProvider implements DirectiveHandlerProvi
 
     private SkillResponse<Void> turnOn(Directive<Void> request) {
         String endpointId = request.getEndpoint().getEndpointId();
-        if (!endpointId.equals("demo-device-01")) {
-            throw new InvalidDirectiveException(DirectiveName.fromDirective(request),
-                    "Device '" + endpointId + "' doesn't support directive");
-        }
+        ThingClient device = ThingFactory.getInstance().get(endpointId);
 
-        UpdateThingShadowRequest thingRequest = UpdateThingShadowRequest.builder()
-                .thingName(THING_NAME)
-                .payload(TURNON_PAYLOAD)
-                .build();
-
-        log.info("Requesting thing [name={},region={}]", THING_NAME, THING_REGION);
-        UpdateThingShadowResponse response = iotDataClient.updateThingShadow(thingRequest);
-        log.info("Response metadata: {}", response.payload().asUtf8String());
-
+        device.turnOn();
         return buildResponse(request, Property.<PowerState>builder()
                 .namespace("Alexa.PowerController")
                 .name("powerState")
@@ -61,18 +35,9 @@ public final class AlexaPowerControllerProvider implements DirectiveHandlerProvi
 
     private SkillResponse<Void> turnOff(Directive<Void> request) {
         String endpointId = request.getEndpoint().getEndpointId();
-        if (!endpointId.equals("demo-device-01")) {
-            throw new InvalidDirectiveException(DirectiveName.fromDirective(request),
-                    "Device '" + endpointId + "' doesn't support directive");
-        }
+        ThingClient device = ThingFactory.getInstance().get(endpointId);
 
-        UpdateThingShadowRequest thingRequest = UpdateThingShadowRequest.builder()
-                .thingName(THING_NAME)
-                .payload(TURNOFF_PAYLOAD)
-                .build();
-        UpdateThingShadowResponse response = iotDataClient.updateThingShadow(thingRequest);
-        log.info("Response metadata: {}", response.payload().asUtf8String());
-
+        device.turnOff();
         return buildResponse(request, Property.<PowerState>builder()
                 .namespace("Alexa.PowerController")
                 .name("powerState")

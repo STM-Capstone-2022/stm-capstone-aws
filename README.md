@@ -37,9 +37,8 @@ supersede `application.properties` when both contain the same key.
 
 These keys include:
 
-- `iot.thing.generic.name` - The ID of the IoT Core Thing of the automated generic power-controllable device.
-- `iot.thing.sensor.name` - The ID of the IoT Core Thing of the door knock sensor.
-- `iot.thing.region` - The AWS-deployed region of both IoT Core Things.
+- `iot.thing.relay.name` - The ID of an IoT Core Thing, the relay to the multiple smart devices.
+- `iot.thing.region` - The AWS-deployed region of the IoT Core Thing.
 
 ## Building and Deploying the Project
 
