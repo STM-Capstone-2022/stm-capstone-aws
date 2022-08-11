@@ -22,7 +22,7 @@ Windows Subsystem for Linux to install the required software. Both our Mac and L
 to install the tooling, and the README's shell commands assume POSIX syntax.
 
 - AWS command line interface: <https://aws.amazon.com/cli/>
-- Node.js's NPM to install the AWS CDK: <https://www.npmjs.com/>
+- Node.js's NPM to install the AWS CDK: <https://www.npmjs.com/> or <https://nodejs.org/en/download/>
     - Or on Mac, run: `brew install npm`
     - Or on Debian Linux, run: `sudo apt-get install npm`
 - Install AWS CDK: `npm install -g aws-cdk`
