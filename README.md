@@ -57,7 +57,7 @@ To build and deploy, run the following commands within the project directory:
 - `cdk synth` to Generate the application templates for each stack and upload assets to the CDK bucket
 - `cdk deploy` to launch the stacks to your account
 
-## stm-alexa-endpoint: Attaching an Alexa Skill
+## stm-alexa-endpoint: Attaching an Alexa Skill (Manual Activation)
 
 I've found that setting up an Alexa Skill is a frustratingly un-automatable task for devs to set up on their own
 accounts. Creating an Alexa Skill needs to happen once, and it needs to be reattached to the Lambda whenever it is fully
@@ -78,7 +78,7 @@ deleted and created (redeploying through CDK shouldn't require this, unless the 
 Finally, set up Account Linking in the AWS
 documentation: <https://developer.amazon.com/en-US/docs/alexa/smarthome/set-up-account-linking-tutorial.html>
 
-## stm-automation-workers: Attaching a Rules Engine to the Detector Models
+## stm-automation-workers: Attaching a Rules Engine to the Detector Models (Automatic Activation)
 
 The stack should have deployed two IoT Event detector models, named `stm-fan-automation-detector`
 and `stm-humidifier-automation-detector`. The AWS Rules Engine can integrate them together with a rule that forwards the
