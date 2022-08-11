@@ -25,6 +25,14 @@ public class AlexaIotApp {
                         .build(),
                 properties);
 
+        new StmAutomationStack(app, "stm-automation-workers",
+                StackProps.builder()
+                        .stackName("stm-automation-workers")
+                        .description("HvAC detector models")
+                        .env(env)
+                        .build(),
+                properties);
+
         app.synth();
     }
 }

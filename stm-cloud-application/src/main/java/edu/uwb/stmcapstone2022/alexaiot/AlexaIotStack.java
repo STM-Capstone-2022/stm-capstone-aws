@@ -42,7 +42,7 @@ public class AlexaIotStack extends Stack {
                 .build();
 
         Role lambdaRole = Role.Builder.create(this, "EndpointRole")
-                .roleName("AlexaSkillEndpointFunctionRole")
+                .roleName("task-alexa-smarthome-endpoint")
                 .inlinePolicies(Collections.singletonMap("SmartHomeSkillPolicy", smartHomeSkillPolicy))
                 .path("/")
                 .assumedBy(new ServicePrincipal("lambda.amazonaws.com"))
